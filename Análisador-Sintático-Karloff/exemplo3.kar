@@ -1,0 +1,29 @@
+void main {
+  newVar int x; 
+  newVar int y;
+  newVar bool bool_var;
+
+  x = 5.236E+7;
+  y = (x + 1.5E-87);
+
+  repeat {
+    bool_var = other_func(x, y);
+    x = my_func(x);
+  } until((x == y));
+
+  if ((bool_var == true)) then {
+    System.output(x);
+  };
+}
+
+func int my_func(int x) {
+  return (x + 1);
+}
+
+func bool other_func(int x, int y) {
+  if ((x < y)) then {
+    return false;
+  };
+
+  return true;
+}

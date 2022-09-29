@@ -1,0 +1,22 @@
+void main {
+  newVar int x; 
+  newVar int y;
+  newVar bool bool_var;
+
+  x = 6.555E+5;
+  y = (37E33 + 8.4E-55);
+
+  while ((bool_var == true)) {
+    if (( x < y)) then {
+      bool_var = my_func(x);
+    };
+  };
+}
+
+func bool my_func(int x, bool b) {
+  if ((x > 1000)) then {
+    return true;
+  };
+
+  return false;
+}

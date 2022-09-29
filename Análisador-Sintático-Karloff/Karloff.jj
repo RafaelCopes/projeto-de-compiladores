@@ -1,0 +1,172 @@
+PARSER_BEGIN(Karloff)
+import java.io.*;
+
+public class Karloff {
+  public static void main(String args[]) throws ParseException, IOException {
+      Karloff analisador = new Karloff(new FileInputStream(args[0]));
+      analisador.Karloff();
+  }
+}
+
+PARSER_END(Karloff)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <MAIN: "main">
+| <VOID: "void">
+| <NEWVAR: "newVar">
+| <INT: "int">
+| <BOOL: "bool">
+| <PVIRGULA: ";">
+| <ATRIB: "=">
+| <ACHAVES: "{">
+| <FCHAVES: "}">
+| <APAR: "(">
+| <FPAR: ")">
+| <IF: "if">
+| <THEN: "then">
+| <ELSE: "else">
+| <WHILE: "while">
+| <REPEAT: "repeat">
+| <RETURN: "return">
+| <UNTIL: "until">
+| <FUNC: "func">
+| <SOUTPUT: "System.output">
+| <TRUE: "true">
+| <FALSE: "false">
+| <SOMA: "+">
+| <SUB: "-">
+| <MULT: "*">
+| <DIV: "/">
+| <AND: "&">
+| <OR: "|">
+| <MAIORQUE: ">">
+| <MENORQUE: "<">
+| <IGUAL: "==">
+| <VIRGULA: ",">
+}
+
+TOKEN :
+{
+  <NUM : (["0"-"9"])+ ("." (["0"-"9"])+)? ("E" ("+" | "-")? (["0"-"9"])+)?>
+ |<ID: (["a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z", "0"-"9"])* ("_" (["a"-"z","A"-"Z", "0"-"9"])+)*>
+}
+
+void Karloff () :
+{}
+{
+  Main() (Func())?
+  <EOF> 
+}
+
+void Main() :
+{}
+{
+  <VOID> <MAIN> <ACHAVES> VarDecl() SeqComandos() <FCHAVES> 
+}
+
+void VarDecl():
+{}
+{
+  (<NEWVAR> Tipo() <ID> <PVIRGULA>)*
+}
+
+void Tipo():
+{}
+{
+  <INT> | <BOOL>
+}
+
+void SeqComandos() :
+{}
+{
+  (Comando())*
+}
+
+void Comando() :
+{}
+{
+  (<ID> ComandoL()) |
+  (<IF> <APAR> Exp() <FPAR> <THEN> <ACHAVES> SeqComandos() <FCHAVES> <PVIRGULA>) |
+  (<WHILE> <APAR> Exp() <FPAR> <ACHAVES> SeqComandos() <FCHAVES> <PVIRGULA>) |
+  (<REPEAT> <ACHAVES> SeqComandos() <FCHAVES> <UNTIL> <APAR> Exp() <FPAR> <PVIRGULA>) |
+  (<RETURN> Exp() <PVIRGULA>) |
+  (<SOUTPUT> <APAR> Exp() <FPAR> <PVIRGULA>)
+}
+
+// por causa de opções começando com mesmo comando
+void ComandoL():
+{}
+{
+  (<ATRIB> Exp() <PVIRGULA>) |
+  (<APAR> ListaExp() <FPAR> <PVIRGULA>)
+}
+
+void Exp():
+{}
+{
+  (<APAR> Exp() Op() Exp() <FPAR>) |
+  Fator()
+}
+
+void Op() :
+{}
+{
+  <SOMA> | <SUB> | <MULT> | <DIV> | <AND> |
+  <OR> | <MAIORQUE>| <MENORQUE> | <IGUAL>
+}
+
+void Fator():
+{}
+{
+  (<ID> FatorL()) | <NUM> | <TRUE> | <FALSE>
+}
+
+// por causa de opções começando com mesmo comando
+void FatorL():
+{}
+{
+  (<APAR> (ListaExp())? <FPAR>)?
+}
+
+void ListaExp():
+{}
+{
+  Exp() ListaExpL()
+}
+
+// por causa da recursão á esquerda
+void ListaExpL():
+{}
+{
+  (<VIRGULA> Exp() ListaExpL())?
+}
+
+void Func(): 
+{}
+{
+  (<FUNC> Tipo() <ID> <APAR> (ListaArg())? <FPAR> <ACHAVES> VarDecl() SeqComandos() <FCHAVES>)+
+}
+
+void ListaArg():
+{}
+{
+  Tipo() <ID> ListaArgL()
+}
+
+// por causa da recursão á esquerda
+void ListaArgL():
+{}
+{
+  (<VIRGULA> Tipo() <ID> ListaArgL())?
+}
+
+
